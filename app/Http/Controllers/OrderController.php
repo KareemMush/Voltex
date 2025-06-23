@@ -17,7 +17,6 @@ class OrderController extends Controller
 
     public function show(Order $order)
     {
-        // Ensure user owns the order
         if ($order->user_id !== Auth::id()) {
             abort(403);
         }
@@ -35,7 +34,6 @@ class OrderController extends Controller
         return redirect()->back()->with('error', 'Your cart is empty.');
     }
 
-    // حساب السعر الكلي
     $totalPrice = 0;
     foreach ($cartItems as $item) {
         $totalPrice += $item->quantity * $item->product->price;
@@ -47,7 +45,7 @@ class OrderController extends Controller
         'address' => $user->address ?? '',
         'phone' => $user->phone ?? '',
         'status' => 'pending',
-        'total_price' => $totalPrice, // تأكد ان العمود موجود بالـ migration وبالـ model
+        'total_price' => $totalPrice, 
     ]);
 
     foreach ($cartItems as $item) {

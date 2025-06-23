@@ -28,7 +28,6 @@ Route::get('/', function () {
     return redirect()->route('login');
 });
 
-// You can add a post-login redirect route for clarity:
 Route::get('/dashboard', function () {
     if (Auth::check()) {
         if (Auth::user()->role === 'admin') {
