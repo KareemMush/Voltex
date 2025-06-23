@@ -20,11 +20,11 @@
                 <li class="nav-item"><a href="{{ route('admin.categories.index') }}" class="nav-link">Categories</a></li>
                 <li class="nav-item"><a href="{{ route('admin.products.index') }}" class="nav-link">Products</a></li>
                 <li class="nav-item"><a href="{{ route('admin.orders.index') }}" class="nav-link">Orders</a></li>
-                <li class="nav-item"><a href="{{ route('admin.order-items.index') }}" class="nav-link">Order Items</a></li>
-                <li class="nav-item"><a href="{{ route('admin.cart-items.index') }}" class="nav-link">Cart Items</a></li>
+                <!-- <li class="nav-item"><a href="{{ route('admin.order-items.index') }}" class="nav-link">Order Items</a></li>
+                <li class="nav-item"><a href="{{ route('admin.cart-items.index') }}" class="nav-link">Cart Items</a></li> -->
             </ul>
             <ul class="navbar-nav ms-auto">
-                <li class="nav-item"><a href="{{ route('profile.edit') }}" class="nav-link">Profile</a></li>
+                <!-- <li class="nav-item"><a href="{{ route('profile.edit') }}" class="nav-link">Profile</a></li> -->
                 <li class="nav-item">
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf

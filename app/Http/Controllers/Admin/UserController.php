@@ -4,6 +4,9 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Models\Category;
+use App\Models\Product;
+use App\Models\Order;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
@@ -63,4 +66,14 @@ class UserController extends Controller
         $user->delete();
         return redirect()->route('admin.users.index');
     }
+    public function dashboard()
+    {
+        $usersCount = User::count();
+        $categoriesCount = Category::count();
+        $productsCount = Product::count();
+        $ordersCount = Order::count();
+
+        return view('admin.dashboard', compact('usersCount', 'categoriesCount', 'productsCount', 'ordersCount'));
+    }
+
 }
