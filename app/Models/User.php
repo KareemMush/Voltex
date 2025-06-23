@@ -23,4 +23,10 @@ class User extends Authenticatable
         'password',
         'remember_token',
     ];
+    public function cartItems()
+{
+    return $this->hasMany(CartItem::class);
+}
+
+
 }
