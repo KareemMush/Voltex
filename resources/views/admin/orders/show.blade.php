@@ -9,7 +9,7 @@
     <li class="list-group-item"><strong>ID:</strong> {{ $order->id }}</li>
     <li class="list-group-item"><strong>User:</strong> {{ $order->user->name ?? 'N/A' }}</li>
     <li class="list-group-item"><strong>Status:</strong> {{ $order->status }}</li>
-    <li class="list-group-item"><strong>Total Price:</strong> ${{ number_format($order->price_at_order_time, 2) }}</li>
+    <li class="list-group-item"><strong>Total Price:</strong> ${{ number_format($order->total_price, 2) }}</li>
     <li class="list-group-item"><strong>Created at:</strong> {{ $order->created_at->format('d M Y H:i') }}</li>
 </ul>
 

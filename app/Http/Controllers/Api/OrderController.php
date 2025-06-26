@@ -8,28 +8,39 @@ use App\Models\Order;
 
 class OrderController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $orders = Order::all();
+        if ($request->user()->role === 'admin') {
+            $orders = Order::all();
+        } else {
+            $orders = Order::where('user_id', $request->user()->id)->get();
+        }
+
         return response()->json($orders);
     }
 
-    public function show($id)
+    public function show(Request $request, $id)
     {
-        $order = Order::findOrFail($id);
+        $order = Order::where('id', $id)
+            ->when($request->user()->role !== 'admin', function ($query) use ($request) {
+                $query->where('user_id', $request->user()->id);
+            })->firstOrFail();
+
         return response()->json($order);
     }
 
     public function store(Request $request)
     {
         $request->validate([
-            'user_id' => 'required|exists:users,id',
             'status' => 'required|string',
             'total_price' => 'required|numeric|min:0',
         ]);
 
-
-        $order = Order::create($request->all());
+        $order = Order::create([
+            'user_id' => $request->user()->id,
+            'status' => $request->status,
+            'total_price' => $request->total_price,
+        ]);
 
         return response()->json([
             'message' => 'Order created successfully.',
@@ -39,16 +50,17 @@ class OrderController extends Controller
 
     public function update(Request $request, $id)
     {
-        $order = Order::findOrFail($id);
+        $order = Order::where('id', $id)
+            ->when($request->user()->role !== 'admin', function ($query) use ($request) {
+                $query->where('user_id', $request->user()->id);
+            })->firstOrFail();
 
         $request->validate([
-            'user_id' => 'sometimes|required|exists:users,id',
             'status' => 'sometimes|required|string',
             'total_price' => 'sometimes|required|numeric|min:0',
         ]);
 
-
-        $order->update($request->all());
+        $order->update($request->only('status', 'total_price'));
 
         return response()->json([
             'message' => 'Order updated successfully.',
@@ -56,9 +68,13 @@ class OrderController extends Controller
         ]);
     }
 
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
-        $order = Order::findOrFail($id);
+        $order = Order::where('id', $id)
+            ->when($request->user()->role !== 'admin', function ($query) use ($request) {
+                $query->where('user_id', $request->user()->id);
+            })->firstOrFail();
+
         $order->delete();
 
         return response()->json([

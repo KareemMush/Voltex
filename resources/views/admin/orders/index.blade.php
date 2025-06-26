@@ -17,7 +17,7 @@
             <td>{{ $order->id }}</td>
             <td>{{ $order->user->name ?? 'N/A' }}</td>
             <td>{{ $order->status }}</td>
-            <td>${{ number_format($order->price_at_order_time, 2) }}</td>
+            <td>${{ number_format($order->total_price, 2) }}</td>
             <td>{{ $order->created_at->format('d M Y H:i') }}</td>
             <td>
                 <a href="{{ route('admin.orders.show', $order) }}" class="btn btn-sm btn-info">View</a>

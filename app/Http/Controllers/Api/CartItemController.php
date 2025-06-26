@@ -8,11 +8,12 @@ use App\Models\CartItem;
 
 class CartItemController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $cartItems = CartItem::all();
+        $cartItems = CartItem::where('user_id', $request->user()->id)->get();
         return response()->json($cartItems);
     }
+
 
     public function show($id)
     {
@@ -23,30 +24,38 @@ class CartItemController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'user_id' => 'required|exists:users,id',
             'product_id' => 'required|exists:products,id',
             'quantity' => 'required|integer|min:1',
         ]);
 
-        $cartItem = CartItem::create($request->all());
+        $cartItem = CartItem::updateOrCreate(
+            [
+                'user_id' => $request->user()->id,
+                'product_id' => $request->product_id,
+            ],
+            [
+                'quantity' => $request->quantity,
+            ]
+        );
 
         return response()->json([
-            'message' => 'Cart item added successfully.',
+            'message' => 'Cart item added/updated successfully.',
             'cartItem' => $cartItem,
         ], 201);
     }
 
+
     public function update(Request $request, $id)
     {
-        $cartItem = CartItem::findOrFail($id);
+        $cartItem = CartItem::where('id', $id)
+            ->where('user_id', $request->user()->id)
+            ->firstOrFail();
 
         $request->validate([
-            'user_id' => 'sometimes|required|exists:users,id',
-            'product_id' => 'sometimes|required|exists:products,id',
             'quantity' => 'sometimes|required|integer|min:1',
         ]);
 
-        $cartItem->update($request->all());
+        $cartItem->update($request->only('quantity'));
 
         return response()->json([
             'message' => 'Cart item updated successfully.',
@@ -54,13 +63,18 @@ class CartItemController extends Controller
         ]);
     }
 
-    public function destroy($id)
+
+    public function destroy(Request $request, $id)
     {
-        $cartItem = CartItem::findOrFail($id);
+        $cartItem = CartItem::where('id', $id)
+            ->where('user_id', $request->user()->id)
+            ->firstOrFail();
+
         $cartItem->delete();
 
         return response()->json([
             'message' => 'Cart item deleted successfully.',
         ]);
     }
+
 }
