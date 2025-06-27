@@ -25,41 +25,41 @@ class OrderController extends Controller
     }
 
    public function store(Request $request)
-{
-    $user = auth()->user();
+    {
+        $user = auth()->user();
 
-    $cartItems = $user->cartItems()->with('product')->get();
+        $cartItems = $user->cartItems()->with('product')->get();
 
-    if ($cartItems->isEmpty()) {
-        return redirect()->back()->with('error', 'Your cart is empty.');
-    }
+        if ($cartItems->isEmpty()) {
+            return redirect()->back()->with('error', 'Your cart is empty.');
+        }
 
-    $totalPrice = 0;
-    foreach ($cartItems as $item) {
-        $totalPrice += $item->quantity * $item->product->price;
-    }
+        $totalPrice = 0;
+        foreach ($cartItems as $item) {
+            $totalPrice += $item->quantity * $item->product->price;
+        }
 
-    $order = Order::create([
-        'user_id' => $user->id,
-        'full_name' => $user->name,
-        'address' => $user->address ?? '',
-        'phone' => $user->phone ?? '',
-        'status' => 'pending',
-        'total_price' => $totalPrice, 
-    ]);
-
-    foreach ($cartItems as $item) {
-        $order->orderItems()->create([
-            'product_id' => $item->product_id,
-            'quantity' => $item->quantity,
-            'price_at_order_time' => $item->product->price,
+        $order = Order::create([
+            'user_id' => $user->id,
+            'full_name' => $user->name,
+            'address' => $user->address ?? '',
+            'phone' => $user->phone ?? '',
+            'status' => 'pending',
+            'total_price' => $totalPrice, 
         ]);
+
+        foreach ($cartItems as $item) {
+            $order->orderItems()->create([
+                'product_id' => $item->product_id,
+                'quantity' => $item->quantity,
+                'price_at_order_time' => $item->product->price,
+            ]);
+        }
+
+        $user->cartItems()->delete();
+
+        return redirect()->route('orders.show', $order)->with('success', 'Order placed successfully.');
     }
-
-    $user->cartItems()->delete();
-
-    return redirect()->route('orders.show', $order)->with('success', 'Order placed successfully.');
-}
 
 
 
