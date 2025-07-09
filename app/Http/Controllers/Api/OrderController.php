@@ -40,6 +40,9 @@ class OrderController extends Controller
             'user_id' => $request->user()->id,
             'status' => $request->status,
             'total_price' => $request->total_price,
+            'full_name' => $request->full_name,
+            'address' => $request->address,
+            'phone' => $request->phone,
         ]);
 
         return response()->json([
@@ -58,6 +61,9 @@ class OrderController extends Controller
         $request->validate([
             'status' => 'sometimes|required|string',
             'total_price' => 'sometimes|required|numeric|min:0',
+            'full_name' => 'required|string|max:255',
+            'address' => 'required|string|max:255',
+            'phone' => 'required|string|max:20',
         ]);
 
         $order->update($request->only('status', 'total_price'));

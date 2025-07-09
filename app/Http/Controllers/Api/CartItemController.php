@@ -15,11 +15,15 @@ class CartItemController extends Controller
     }
 
 
-    public function show($id)
+    public function show(Request $request, $id)
     {
-        $cartItem = CartItem::findOrFail($id);
+        $cartItem = CartItem::where('id', $id)
+            ->where('user_id', $request->user()->id)
+            ->firstOrFail();
+
         return response()->json($cartItem);
     }
+
 
     public function store(Request $request)
     {
@@ -39,7 +43,7 @@ class CartItemController extends Controller
         );
 
         return response()->json([
-            'message' => 'Cart item added/updated successfully.',
+            'message' => 'Cart item added successfully.',
             'cartItem' => $cartItem,
         ], 201);
     }
